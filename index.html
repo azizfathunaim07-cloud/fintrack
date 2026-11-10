@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinTrack | Dashboard Keuangan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <div class="brand-icon">F</div>
+        </div>
+
+        <nav class="nav" aria-label="Navigasi utama">
+          <a class="nav-item active" href="#" data-view="overview" aria-label="Overview">◫</a>
+          <a class="nav-item" href="#" data-view="transactions" aria-label="Transaksi">▣</a>
+          <a class="nav-item" href="#" data-view="budget" aria-label="Perencanaan Bulanan">◔</a>
+          <a class="nav-item" href="#" data-view="reports" aria-label="Laporan">◌</a>
+        </nav>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Dashboard</p>
+            <h1>KELUARGA BERENCANA</h1>
+          </div>
+
+          <div class="topbar-actions">
+            <button id="themeToggle" class="btn btn-ghost theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme">
+              <span aria-hidden="true">🌙</span>
+            </button>
+            <span id="statusBadge" class="status-badge demo">Demo mode</span>
+
+            <div class="account-menu">
+              <button id="logoutBtn" class="pie-button hidden" type="button" aria-label="Menu akun" title="Menu akun">
+                <span class="pie-avatar">A</span>
+              </button>
+
+              <div id="accountMenu" class="account-menu-panel hidden" role="menu" aria-label="Menu akun">
+                <button type="button" class="menu-item" data-menu-action="account">Akun</button>
+                <button type="button" class="menu-item" data-menu-action="settings">Settings</button>
+                <button type="button" class="menu-item menu-danger" data-menu-action="logout">Keluar</button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section id="authSection" class="auth-section">
+          <div class="auth-card">
+            <div class="auth-header">
+              <p class="eyebrow">Akses aplikasi</p>
+              <h2 id="authTitle">Masuk</h2>
+            </div>
+
+            <form id="loginForm" class="auth-form">
+              <label>
+                Email
+                <input type="email" id="loginEmail" placeholder="nama@email.com" required />
+              </label>
+
+              <label>
+                Password
+                <input type="password" id="loginPassword" placeholder="••••••••" required />
+              </label>
+
+              <button type="submit" class="btn btn-primary btn-block">Masuk</button>
+            </form>
+
+            <form id="registerForm" class="auth-form hidden">
+              <label>
+                Nama lengkap
+                <input type="text" id="registerName" placeholder="Nama Anda" required />
+              </label>
+
+              <label>
+                Email
+                <input type="email" id="registerEmail" placeholder="nama@email.com" required />
+              </label>
+
+              <label>
+                Password
+                <input type="password" id="registerPassword" placeholder="Minimal 6 karakter" required />
+              </label>
+
+              <button type="submit" class="btn btn-primary btn-block">Daftar</button>
+            </form>
+
+            <p class="auth-switch">
+              <span id="authToggleText">Belum punya akun?</span>
+              <button id="toggleAuthMode" type="button" class="link-button">Daftar sekarang</button>
+            </p>
+          </div>
+        </section>
+
+        <section id="dashboardSection" class="dashboard hidden">
+          <section id="overviewView" class="view-section">
+            <div class="stats-grid">
+              <article class="stat-card income">
+                <span class="stat-label">Saldo</span>
+                <strong id="balanceValue">Rp 0</strong>
+              </article>
+              <article class="stat-card expense">
+                <span class="stat-label">Pemasukan</span>
+                <strong id="incomeValue">Rp 0</strong>
+              </article>
+              <article class="stat-card neutral">
+                <span class="stat-label">Pengeluaran</span>
+                <strong id="expenseValue">Rp 0</strong>
+              </article>
+              <article class="stat-card accent">
+                <span class="stat-label">Transaksi</span>
+                <strong id="transactionCount">0</strong>
+              </article>
+            </div>
+
+            <div class="toolbar-panel panel">
+              <div class="toolbar-header">
+                <h2>Filter & Ringkasan</h2>
+              </div>
+
+              <div class="toolbar-controls">
+                <label>
+                  Jenis
+                  <select id="filterType">
+                    <option value="all">Semua</option>
+                    <option value="income">Pemasukan</option>
+                    <option value="expense">Pengeluaran</option>
+                  </select>
+                </label>
+
+                <label>
+                  Bulan
+                  <input type="month" id="monthFilter" />
+                </label>
+
+                <label>
+                  User
+                  <select id="userFilter">
+                    <option value="all">Semua user</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="summary-strip">
+                <div class="summary-item">
+                  <span>Pemasukan</span>
+                  <strong id="summaryIncome">Rp 0</strong>
+                </div>
+                <div class="summary-item">
+                  <span>Pengeluaran</span>
+                  <strong id="summaryExpense">Rp 0</strong>
+                </div>
+                <div class="summary-item">
+                  <span>Saldo</span>
+                  <strong id="summaryBalance">Rp 0</strong>
+                </div>
+                <div class="summary-item">
+                  <span>Terlihat</span>
+                  <strong id="summaryVisibleCount">0</strong>
+                </div>
+              </div>
+
+              <div class="overview-transactions">
+                <div class="overview-transactions-header">
+                  <h3>Daftar Transaksi</h3>
+                </div>
+                <ul id="overviewTransactionList" class="overview-transaction-list"></ul>
+              </div>
+            </div>
+          </section>
+
+          <section id="transactionsView" class="view-section hidden">
+            <div class="transactions-stack">
+              <aside class="panel form-panel">
+                <div class="form-panel-header">
+                  <div>
+                    <span class="eyebrow eyebrow-soft">Transaksi</span>
+                    <h2 id="transactionFormTitle">Tambah Transaksi</h2>
+                  </div>
+                  <span class="mini-pill">Baru</span>
+                </div>
+
+                <form id="transactionForm" class="transaction-form">
+                  <label class="field-group">
+                    <span class="field-label">Tanggal</span>
+                    <input type="date" id="transactionDate" required />
+                  </label>
+
+                  <select id="transactionType" class="hidden-select" required>
+                    <option value="income">Pemasukan</option>
+                    <option value="expense">Pengeluaran</option>
+                  </select>
+
+                  <div class="field-group">
+                    <div class="bulk-header-row">
+                      <span class="field-label">Baris transaksi</span>
+                      <button type="button" id="addTransactionRowButton" class="btn btn-secondary btn-small">+ Tambah baris</button>
+                    </div>
+
+                    <div class="transaction-row-header">
+                      <span>Kategori</span>
+                      <span>Deskripsi</span>
+                      <span>Jenis</span>
+                      <span>Nominal</span>
+                    </div>
+
+                    <div id="transactionRowsContainer" class="transaction-rows-container"></div>
+                  </div>
+
+                  <div class="form-actions">
+                    <button type="submit" id="submitTransactionButton" class="btn btn-primary btn-block">Simpan transaksi</button>
+                    <button type="button" id="cancelEditButton" class="btn btn-secondary btn-block hidden">Batal edit</button>
+                  </div>
+                </form>
+              </aside>
+
+              <section class="panel panel-table">
+                <div class="panel-header">
+                  <h2>Transaksi Terbaru</h2>
+                  <div class="table-actions-group">
+                    <button id="exportCsvButton" class="btn btn-secondary" type="button">Export CSV</button>
+                    <button id="refreshButton" class="btn btn-secondary" type="button">Segarkan</button>
+                  </div>
+                </div>
+
+                <div class="table-wrapper">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Tanggal</th>
+                        <th>Kategori</th>
+                        <th>Deskripsi</th>
+                        <th>User</th>
+                        <th>Jenis</th>
+                        <th>Nominal</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="transactionTableBody"></tbody>
+                  </table>
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <section id="budgetView" class="view-section hidden">
+            <div class="panel form-panel budget-panel">
+              <div class="form-panel-header">
+                <div>
+                  <span class="eyebrow eyebrow-soft">Anggaran</span>
+                  <h2>Perencanaan Bulanan</h2>
+                </div>
+                <span class="mini-pill">Target</span>
+              </div>
+
+              <form id="budgetForm" class="budget-form transaction-form">
+                <label class="field-group">
+                  <span class="field-label">Bulan</span>
+                  <input type="month" id="budgetMonth" required />
+                </label>
+
+                <select id="budgetType" class="hidden-select" required>
+                  <option value="expense" selected>Pengeluaran</option>
+                  <option value="income">Pemasukan</option>
+                </select>
+
+                <div class="field-group">
+                  <div class="bulk-header-row">
+                    <span class="field-label">Baris anggaran</span>
+                    <button type="button" id="addBudgetRowButton" class="btn btn-secondary btn-small">+ Tambah baris</button>
+                  </div>
+
+                  <div class="transaction-row-header budget-row-header">
+                    <span>Kategori</span>
+                    <span>Jenis</span>
+                    <span>Nominal</span>
+                    <span>Catatan</span>
+                  </div>
+
+                  <div id="budgetRowsContainer" class="transaction-rows-container"></div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary btn-block">Simpan anggaran</button>
+                </div>
+              </form>
+
+              <div class="budget-list-wrap">
+                <h3>Daftar Anggaran</h3>
+                <div id="budgetPlanList" class="budget-plan-list"></div>
+              </div>
+            </div>
+          </section>
+
+          <section id="reportsView" class="view-section hidden">
+            <div class="overview-top-controls">
+              <div class="summary-feature-menu">
+                <button id="summaryFeatureButton" type="button" class="pie-button summary-pie-button" aria-label="Menu ringkasan fitur" title="Menu ringkasan fitur">
+                  <span class="pie-avatar" aria-hidden="true">
+                    <span class="pie-lines">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </span>
+                  </span>
+                </button>
+
+                <div id="summaryFeatureMenu" class="account-menu-panel summary-feature-panel hidden" role="menu" aria-label="Menu ringkasan fitur">
+                  <button type="button" class="menu-item" data-summary-feature="Dashboard Utama (Ringkasan Cepat)">
+                    <span class="menu-bullet">◫</span>
+                    <span>Dashboard Utama</span>
+                  </button>
+                  <button type="button" class="menu-item" data-summary-feature="Visualisasi Data (Diagram &amp; Grafik)">
+                    <span class="menu-bullet">◔</span>
+                    <span>Visualisasi Data</span>
+                  </button>
+                  <button type="button" class="menu-item" data-summary-feature="Fitur Filter &amp; Periode Waktu">
+                    <span class="menu-bullet">◌</span>
+                    <span>Filter &amp; Periode</span>
+                  </button>
+                  <button type="button" class="menu-item" data-summary-feature="Anggaran &amp; Batas Pengeluaran (Budgeting &amp; Alerts)">
+                    <span class="menu-bullet">▣</span>
+                    <span>Budgeting &amp; Alerts</span>
+                  </button>
+                  <button type="button" class="menu-item" data-summary-feature="Tabel Detail Transaksi &amp; Ekspor Data">
+                    <span class="menu-bullet">▤</span>
+                    <span>Detail &amp; Ekspor</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div id="reportDashboardContent" class="report-core-content">
+              <div class="reports-grid">
+                <div class="panel chart-panel">
+                  <div class="panel-header">
+                    <h2>Trend Bulanan</h2>
+                  </div>
+                  <div class="chart-legend">
+                    <span><i class="legend-dot income"></i>Pemasukan</span>
+                    <span><i class="legend-dot expense"></i>Pengeluaran</span>
+                  </div>
+                  <div id="monthlyChart" class="monthly-chart" aria-label="Grafik trend bulanan"></div>
+                </div>
+
+                <aside class="panel category-panel">
+                  <div class="panel-header">
+                    <h2>Kategori Termahal</h2>
+                  </div>
+                  <ul id="categorySummaryList" class="category-list"></ul>
+                </aside>
+              </div>
+
+              <div class="report-detail-grid">
+                <aside class="panel report-panel">
+                  <div class="panel-header">
+                    <h2>Detail per User</h2>
+                  </div>
+                  <ul id="userBreakdownList" class="data-list"></ul>
+                </aside>
+
+                <aside class="panel report-panel">
+                  <div class="panel-header">
+                    <h2>Detail per Kategori</h2>
+                  </div>
+                  <ul id="categoryBreakdownList" class="data-list"></ul>
+                </aside>
+              </div>
+            </div>
+
+            <section id="reportVisualSubView" class="report-subview hidden" aria-label="Visualisasi data keuangan">
+              <div class="report-subview-header">
+                <div>
+                  <p class="eyebrow">Visualisasi Data</p>
+                  <h2>Diagram &amp; Grafik</h2>
+                </div>
+                <button type="button" id="reportVisualBackButton" class="btn btn-secondary btn-small">Kembali</button>
+              </div>
+
+              <div class="visual-grid">
+                <div class="panel report-panel">
+                  <div class="panel-header">
+                    <h2>Proporsi Pengeluaran per Kategori</h2>
+                  </div>
+                  <div id="expenseDonutChart" class="donut-chart-wrap"></div>
+                </div>
+
+                <div class="panel report-panel">
+                  <div class="panel-header">
+                    <h2>Sumber Pemasukan</h2>
+                  </div>
+                  <div id="incomeDonutChart" class="donut-chart-wrap"></div>
+                </div>
+              </div>
+
+              <div class="visual-grid">
+                <div class="panel report-panel">
+                  <div class="panel-header">
+                    <h2>Perbandingan Bulanan</h2>
+                  </div>
+                  <div id="monthlyComparisonChart" class="comparison-chart" aria-label="Grafik perbandingan bulanan"></div>
+                </div>
+
+                <div class="panel report-panel">
+                  <div class="panel-header">
+                    <h2>Pengeluaran Harian</h2>
+                  </div>
+                  <div id="dailyExpenseChart" class="daily-chart" aria-label="Grafik pengeluaran harian"></div>
+                </div>
+              </div>
+
+              <div class="panel report-detail-panel">
+                <div class="panel-header report-detail-header">
+                  <h2>Riwayat Transaksi</h2>
+                  <div class="report-detail-toolbar">
+                    <input id="reportDetailSearch" type="search" placeholder="Cari transaksi..." aria-label="Cari transaksi" />
+                    <select id="reportDetailSort" aria-label="Urutkan transaksi">
+                      <option value="date-desc">Tanggal: terbaru</option>
+                      <option value="date-asc">Tanggal: terlama</option>
+                      <option value="amount-desc">Nominal: terbesar</option>
+                      <option value="amount-asc">Nominal: terkecil</option>
+                    </select>
+                    <button type="button" id="reportDetailPdfButton" class="btn btn-secondary btn-small">PDF</button>
+                    <button type="button" id="reportDetailCsvButton" class="btn btn-primary btn-small">CSV</button>
+                  </div>
+                </div>
+                <div class="report-table-wrap">
+                  <table class="report-table">
+                    <thead>
+                      <tr>
+                        <th>Tanggal</th>
+                        <th>Kategori</th>
+                        <th>Keterangan/Catatan</th>
+                        <th>Jenis</th>
+                        <th>Jumlah</th>
+                        <th>Dompet</th>
+                      </tr>
+                    </thead>
+                    <tbody id="reportDetailTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+
+            <section id="reportDetailSubView" class="report-subview hidden" aria-label="Detail transaksi dan ekspor laporan">
+              <div class="report-subview-header">
+                <div>
+                  <p class="eyebrow">Detail &amp; Ekspor</p>
+                  <h2>Tabel Detail Transaksi</h2>
+                </div>
+                <button type="button" id="reportDetailBackButton" class="btn btn-secondary btn-small">Kembali</button>
+              </div>
+
+              <div class="panel report-detail-panel">
+                <div class="panel-header report-detail-header">
+                  <h2>Riwayat Transaksi</h2>
+                  <div class="report-detail-toolbar">
+                    <input id="reportDetailSearchFull" type="search" placeholder="Cari transaksi..." aria-label="Cari transaksi penuh" />
+                    <select id="reportDetailSortFull" aria-label="Urutkan transaksi penuh">
+                      <option value="date-desc">Tanggal: terbaru</option>
+                      <option value="date-asc">Tanggal: terlama</option>
+                      <option value="amount-desc">Nominal: terbesar</option>
+                      <option value="amount-asc">Nominal: terkecil</option>
+                    </select>
+                    <button type="button" id="reportDetailPdfButtonFull" class="btn btn-secondary btn-small">PDF</button>
+                    <button type="button" id="reportDetailCsvButtonFull" class="btn btn-primary btn-small">CSV</button>
+                  </div>
+                </div>
+                <div class="report-table-wrap">
+                  <table class="report-table">
+                    <thead>
+                      <tr>
+                        <th>Tanggal</th>
+                        <th>Kategori</th>
+                        <th>Keterangan/Catatan</th>
+                        <th>Jenis</th>
+                        <th>Jumlah</th>
+                        <th>Dompet</th>
+                      </tr>
+                    </thead>
+                    <tbody id="reportDetailTableBodyFull"></tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+
+            <section id="reportOverviewSubView" class="report-subview hidden" aria-label="Dashboard utama ringkasan">
+              <div class="report-subview-header">
+                <div>
+                  <p class="eyebrow">Ringkasan Cepat</p>
+                  <h2>Dashboard Utama</h2>
+                </div>
+                <button type="button" id="reportOverviewBackButton" class="btn btn-secondary btn-small">Kembali</button>
+              </div>
+
+              <div class="report-overview-summary">
+                <div class="panel report-overview-panel">
+                  <div class="report-overview-header">
+                    <div>
+                      <p class="muted-label">Total Saldo Keseluruhan</p>
+                      <h3 id="reportOverviewTotalBalance">Rp0</h3>
+                    </div>
+                    <span id="reportOverviewHealthBadge" class="health-badge">Sehat</span>
+                  </div>
+                  <div id="reportWalletBreakdown" class="wallet-breakdown-grid"></div>
+                </div>
+              </div>
+
+              <div class="report-overview-cashflow">
+                <div class="panel report-panel">
+                  <div class="panel-header">
+                    <h2>Arus Kas Bulan Ini</h2>
+                  </div>
+                  <div class="cashflow-list">
+                    <div class="cashflow-row">
+                      <span>Total Pemasukan</span>
+                      <strong id="reportIncomeValue" class="income-value">+Rp0</strong>
+                    </div>
+                    <div class="cashflow-row">
+                      <span>Total Pengeluaran</span>
+                      <strong id="reportExpenseValue" class="expense-value">-Rp0</strong>
+                    </div>
+                    <div class="cashflow-row cashflow-row-highlight">
+                      <span>Selisih / Sisa Tabungan</span>
+                      <strong id="reportNetValue" class="net-value">Rp0</strong>
+                    </div>
+                    <div class="cashflow-row">
+                      <span>Net Savings Rate</span>
+                      <strong id="reportSavingsRateValue" class="neutral-value">0%</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="panel report-panel">
+                  <div class="panel-header">
+                    <h2>Indikator Kesehatan Keuangan</h2>
+                  </div>
+                  <div id="reportFinancialHealthText" class="health-note">Belum ada data.</div>
+                </div>
+              </div>
+            </section>
+
+            <section id="reportBudgetSubView" class="report-subview hidden" aria-label="Anggaran dan peringatan pengeluaran">
+              <div class="report-subview-header">
+                <div>
+                  <p class="eyebrow">Budgeting &amp; Alerts</p>
+                  <h2>Anggaran Preventif</h2>
+                </div>
+                <button type="button" id="reportBudgetBackButton" class="btn btn-secondary btn-small">Kembali</button>
+              </div>
+
+              <div class="panel report-budget-panel">
+                <div id="reportBudgetList" class="report-budget-list" aria-live="polite"></div>
+              </div>
+            </section>
+
+            <section id="reportFilterSubView" class="report-subview hidden" aria-label="Filter laporan fleksibel">
+              <div class="report-subview-header">
+                <div>
+                  <p class="eyebrow">Filter &amp; Periode</p>
+                  <h2>Analisis Fleksibel</h2>
+                </div>
+                <button type="button" id="reportFilterBackButton" class="btn btn-secondary btn-small">Kembali</button>
+              </div>
+
+              <div class="panel report-filter-panel">
+                <div class="filter-group-block">
+                  <label class="field-label">Pilihan Periode</label>
+                  <div class="segment-control" role="tablist" aria-label="Pilihan periode laporan">
+                    <button type="button" class="segment-btn" data-report-period="daily">Harian</button>
+                    <button type="button" class="segment-btn" data-report-period="weekly">Mingguan</button>
+                    <button type="button" class="segment-btn active" data-report-period="monthly">Bulanan</button>
+                    <button type="button" class="segment-btn" data-report-period="yearly">Tahunan</button>
+                    <button type="button" class="segment-btn" data-report-period="custom">Kustom</button>
+                  </div>
+                </div>
+
+                <div class="report-filter-grid">
+                  <label class="field-group">
+                    <span class="field-label">Dompet / Akun</span>
+                    <select id="reportWalletFilter">
+                      <option value="all">Semua rekening</option>
+                      <option value="tabungan">Tabungan</option>
+                      <option value="kas-tunai">Kas Tunai</option>
+                      <option value="e-wallet">E-Wallet</option>
+                      <option value="kartu-kredit">Kartu Kredit</option>
+                    </select>
+                  </label>
+
+                  <label class="field-group">
+                    <span class="field-label">Kategori Utama</span>
+                    <select id="reportCategoryFilter">
+                      <option value="all">Semua kategori</option>
+                    </select>
+                  </label>
+
+                  <label class="field-group">
+                    <span class="field-label">Sub-Kategori / Tag</span>
+                    <select id="reportSubcategoryFilter">
+                      <option value="all">Semua sub-kategori</option>
+                    </select>
+                  </label>
+
+                  <label class="field-group">
+                    <span class="field-label">Tag Khusus</span>
+                    <input type="text" id="reportTagFilter" placeholder="Cth: gajian, liburan, rutin" />
+                  </label>
+                </div>
+
+                <div id="reportCustomDateRange" class="report-custom-range hidden">
+                  <div class="report-filter-grid compact-grid">
+                    <label class="field-group">
+                      <span class="field-label">Tanggal Mulai</span>
+                      <input type="date" id="reportStartDate" />
+                    </label>
+                    <label class="field-group">
+                      <span class="field-label">Tanggal Selesai</span>
+                      <input type="date" id="reportEndDate" />
+                    </label>
+                  </div>
+                </div>
+
+                <div class="filter-actions-row">
+                  <button type="button" id="reportFilterApplyButton" class="btn btn-primary">Terapkan Filter</button>
+                  <button type="button" id="reportFilterResetButton" class="btn btn-secondary">Reset</button>
+                </div>
+
+                <div id="reportFilterSummary" class="report-filter-summary">
+                  Menampilkan data bulan ini berdasarkan semua rekening dan semua kategori.
+                </div>
+              </div>
+            </section>
+          </section>
+
+          <section id="settingsView" class="view-section hidden">
+            <div class="settings-panel panel">
+              <div class="panel-header">
+                <h2>Profil Pengguna</h2>
+              </div>
+
+              <div class="profile-card">
+                <label>
+                  Nama
+                  <input type="text" id="profileName" placeholder="Masukkan nama" />
+                </label>
+
+                <label>
+                  Email
+                  <input type="email" id="profileEmail" readonly />
+                </label>
+
+                <label>
+                  Target Bulanan
+                  <input type="number" id="profileTarget" min="0" step="1000" placeholder="5000000" />
+                </label>
+
+                <button type="button" id="saveProfileButton" class="btn btn-primary btn-block">Simpan profil</button>
+              </div>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <div id="toast" class="toast" aria-live="polite"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
