@@ -717,7 +717,15 @@ const syncTransactionTypeButtons = () => {
 };
 
 const syncCategoryButtons = () => {
-  const currentCategory = document.getElementById('transactionCategory').value.trim();
+  const transactionCategoryInput = document.getElementById('transactionCategory');
+  if (!transactionCategoryInput) {
+    document.querySelectorAll('[data-category-option]').forEach((button) => {
+      button.classList.remove('selected');
+    });
+    return;
+  }
+
+  const currentCategory = transactionCategoryInput.value.trim();
   document.querySelectorAll('[data-category-option]').forEach((button) => {
     const isSelected = button.dataset.categoryOption === currentCategory;
     button.classList.toggle('selected', isSelected);
@@ -733,13 +741,25 @@ const normalizeAmount = (value) => {
 
 const getTransactionPayload = () => {
   const userId = getCurrentUserId();
+  const firstRow = transactionRowsContainer?.querySelector('.transaction-row');
+  const legacyDate = document.getElementById('transactionDate')?.value || '';
+  const legacyCategory = document.getElementById('transactionCategory')?.value.trim() || '';
+  const legacyDescription = document.getElementById('transactionDescription')?.value.trim() || '';
+  const legacyType = document.getElementById('transactionType')?.value || 'expense';
+  const legacyAmount = normalizeAmount(document.getElementById('transactionAmount')?.value || '');
+
+  const rowCategory = firstRow?.querySelector('.transaction-row-category')?.value.trim() || legacyCategory;
+  const rowDescription = firstRow?.querySelector('.transaction-row-description')?.value.trim() || legacyDescription;
+  const rowType = firstRow?.querySelector('.transaction-row-type')?.value || legacyType;
+  const rowAmount = normalizeAmount(firstRow?.querySelector('.transaction-row-amount')?.value || String(legacyAmount));
+
   const payload = {
     wallet_id: defaultWalletId,
-    date: document.getElementById('transactionDate').value,
-    category: document.getElementById('transactionCategory').value.trim(),
-    description: document.getElementById('transactionDescription').value.trim(),
-    type: document.getElementById('transactionType').value,
-    amount: normalizeAmount(document.getElementById('transactionAmount').value),
+    date: legacyDate,
+    category: rowCategory,
+    description: rowDescription,
+    type: rowType,
+    amount: rowAmount,
   };
 
   if (userId) {
